@@ -3,14 +3,12 @@ package mchain
 import (
 	"errors"
 	"fmt"
-	"io/ioutil"
 	"math/rand"
 	"strings"
-	"time"
 )
 
 type MarkovChain struct {
-	FileName  string
+	File      []byte
 	Words     []string
 	WordsSize int
 	Chain     map[[2]string][]string
@@ -18,19 +16,15 @@ type MarkovChain struct {
 
 type triplet struct{ w1, w2, w3 string }
 
-func NewMarkovChain(fileName string) (m *MarkovChain) {
-	m = &MarkovChain{FileName: fileName}
+func NewMarkovChain(txtFile []byte) (m *MarkovChain) {
+	m = &MarkovChain{File: txtFile}
 	m.readFile()
 	m.train()
 	return
 }
 
 func (m *MarkovChain) readFile() {
-	data, err := ioutil.ReadFile(m.FileName)
-	if err != nil {
-		panic(err)
-	}
-	text := strings.TrimSpace(string(data))
+	text := strings.TrimSpace(string(m.File))
 	text = strings.Replace(text, "\n", " ", -1)
 	words := strings.Fields(text)
 	m.Words = words
@@ -76,7 +70,6 @@ func (m *MarkovChain) ShowChain() {
 }
 
 func (m *MarkovChain) Generate(size int) string {
-	rand.Seed(time.Now().UnixNano())
 	seed := rand.Intn(m.WordsSize - 3)
 	seedWord, nextWord := m.Words[seed], m.Words[seed+1]
 	w1, w2 := seedWord, nextWord
@@ -84,7 +77,11 @@ func (m *MarkovChain) Generate(size int) string {
 	sentences := []string{}
 	counter := 0
 	for counter < size {
-		current = append(current, w1)
+		if counter == 0 {
+			current = append(current, w1)
+		} else {
+			current = append(current, w1)
+		}
 		if strings.HasSuffix(w1, ".") {
 			sentence := strings.Join(current, " ")
 			sentences = append(sentences, sentence)
