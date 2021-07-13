@@ -86,8 +86,8 @@ func (m *MarkovChain) Generate(size int) string {
 		v := m.Chain[[2]string{w1, w2}]
 		if len(v) == 0 { 
 			newSeed := rand.Intn(m.WordsSize - 3)
-			next := m.Words[newSeed]
-			w1, w2 = w2, v[next]
+			newWord := m.Words[newSeed]
+			w1, w2 = w2, newWord
 		} else {
 			next := rand.Intn(len(v))
 			w1, w2 = w2, v[next]
