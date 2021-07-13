@@ -1,3 +1,8 @@
+/*
+Package mchain implements Markov text generation. It maps prefixes to suffixes found in texts files.
+It string together prefixes and suffixes randomly to generate logical sentences.
+*/
+
 package mchain
 
 import (
@@ -45,7 +50,7 @@ func (m *MarkovChain) train() {
 
 func (m *MarkovChain) triples() <-chan triplet {
 	if m.WordsSize < 3 {
-		err := errors.New("Source text too short")
+		err := errors.New("source text too short")
 		panic(err)
 	}
 	ch := make(chan triplet)
@@ -92,7 +97,7 @@ func (m *MarkovChain) Generate(size int) string {
 			next := rand.Intn(len(v))
 			w1, w2 = w2, v[next]
 		}
-		counter += 1
+		counter ++
 	}
 	current = append(current, w2)
 	sentence := strings.Join(current, " ")
