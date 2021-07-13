@@ -77,19 +77,21 @@ func (m *MarkovChain) Generate(size int) string {
 	sentences := []string{}
 	counter := 0
 	for counter < size {
-		if counter == 0 {
-			current = append(current, w1)
-		} else {
-			current = append(current, w1)
-		}
+		current = append(current, w1)
 		if strings.HasSuffix(w1, ".") {
 			sentence := strings.Join(current, " ")
 			sentences = append(sentences, sentence)
 			current = []string{}
 		}
 		v := m.Chain[[2]string{w1, w2}]
-		next := rand.Intn(len(v))
-		w1, w2 = w2, v[next]
+		if len(v) == 0 { 
+			newSeed := rand.Intn(m.WordsSize - 3)
+			next := m.Words[newSeed]
+			w1, w2 = w2, v[next]
+		} else {
+			next := rand.Intn(len(v))
+			w1, w2 = w2, v[next]
+		}
 		counter += 1
 	}
 	current = append(current, w2)
